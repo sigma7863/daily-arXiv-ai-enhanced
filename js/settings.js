@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+  setupThemeToggle();
   initSettings();
   initEventListeners();
   fetchGitHubStats();
@@ -74,7 +75,7 @@ function showEmptyTagMessage() {
   const emptyMessage = document.createElement('div');
   emptyMessage.id = 'emptyTagMessage';
   emptyMessage.className = 'empty-tag-message';
-  emptyMessage.textContent = 'No keywords added yet. Add some keywords below.';
+  emptyMessage.textContent = 'キーワードが未設定です。下から追加してください。';
   selectedKeywordsContainer.appendChild(emptyMessage);
 }
 
@@ -84,7 +85,7 @@ function showEmptyAuthorMessage() {
   const emptyMessage = document.createElement('div');
   emptyMessage.id = 'emptyAuthorMessage';
   emptyMessage.className = 'empty-tag-message';
-  emptyMessage.textContent = 'No authors added yet. Add some authors below.';
+  emptyMessage.textContent = '著者が未設定です。下から追加してください。';
   selectedAuthorsContainer.appendChild(emptyMessage);
 }
 
@@ -315,12 +316,12 @@ function copyKeywords() {
   });
 
   if (keywords.length === 0) {
-    showNotification('No keywords to copy!', 'info');
+    showNotification('コピーするキーワードがありません。', 'info');
     return;
   }
 
   const keywordsString = keywords.join(',');
-  copyToClipboard(keywordsString, 'Keywords copied to clipboard!');
+  copyToClipboard(keywordsString, 'キーワードをクリップボードにコピーしました。');
 }
 
 // 复制作者到剪切板
@@ -333,12 +334,12 @@ function copyAuthors() {
   });
 
   if (authors.length === 0) {
-    showNotification('No authors to copy!', 'info');
+    showNotification('コピーする著者がありません。', 'info');
     return;
   }
 
   const authorsString = authors.join(',');
-  copyToClipboard(authorsString, 'Authors copied to clipboard!');
+  copyToClipboard(authorsString, '著者をクリップボードにコピーしました。');
 }
 
 // 复制到剪切板的通用函数
@@ -369,7 +370,7 @@ function fallbackCopyText(text, successMessage) {
     showNotification(successMessage, 'success');
   } catch (err) {
     console.error('复制失败:', err);
-    showNotification('Failed to copy to clipboard', 'info');
+    showNotification('クリップボードへのコピーに失敗しました。', 'info');
   }
 
   document.body.removeChild(textArea);
@@ -398,7 +399,7 @@ function saveSettings() {
   localStorage.setItem('preferredAuthors', JSON.stringify(authors));
   
   // 显示保存成功提示，添加成功图标
-  showNotification('Settings saved successfully!', 'success');
+    showNotification('設定を保存しました。', 'success');
 }
 
 // 重置设置
@@ -416,7 +417,7 @@ function resetSettings() {
   showEmptyAuthorMessage();
   
   // 显示重置成功提示
-  showNotification('Settings reset to default!', 'info');
+  showNotification('設定を初期状態に戻しました。', 'info');
 }
 
 // 显示通知

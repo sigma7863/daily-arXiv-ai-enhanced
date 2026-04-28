@@ -1005,4 +1005,19 @@ input:checked + .toggle-slider:before {
   to {
     opacity: 1;
   }
-} 
+}
+
+[data-theme='dark'] .keyword-count,
+[data-theme='dark'] .warning-content,
+[data-theme='dark'] .paper-sidebar,
+[data-theme='dark'] .paper-card {
+  background: var(--card-bg-color);
+  color: var(--text-color);
+}
+
+[data-theme='dark'] .warning-content p,
+[data-theme='dark'] .paper-authors,
+[data-theme='dark'] .paper-summary,
+[data-theme='dark'] .paper-categories {
+  color: var(--text-secondary);
+}

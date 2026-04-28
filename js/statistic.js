@@ -6,6 +6,7 @@ let isRangeMode = false;
 let allPapersData = [];
 
 document.addEventListener('DOMContentLoaded', () => {
+  setupThemeToggle();
   // Check screen size
   const checkScreenSize = () => {
     if (window.innerWidth < 768) {
@@ -13,9 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
       warningModal.className = 'screen-size-warning';
       warningModal.innerHTML = `
         <div class="warning-content">
-          <h3>⚠️ Screen Size Notice</h3>
-          <p>We've detected that you're using a device with a small screen. For the best data visualization experience, we recommend viewing this statistics page on a larger screen device (such as a tablet or computer).</p>
-          <button onclick="this.parentElement.parentElement.remove()">Got it</button>
+          <h3>⚠️ 画面サイズに関するお知らせ</h3>
+          <p>画面サイズが小さい端末を検出しました。統計の可視化を快適に利用するため、タブレットまたはPCなどの大きな画面での閲覧をおすすめします。</p>
+          <button onclick="this.parentElement.parentElement.remove()">OK</button>
         </div>
       `;
       document.body.appendChild(warningModal);
@@ -115,9 +116,12 @@ function initEventListeners() {
 // Function to detect preferred language based on browser settings
 function getPreferredLanguage() {
   const browserLang = navigator.language || navigator.userLanguage;
-  // Check if browser is set to Chinese variants
+  // 日本語・中国語ブラウザは中国語データを優先
   if (browserLang.startsWith('zh')) {
     return 'Chinese';
+  }
+  if (browserLang.startsWith('ja')) {
+    return 'English';
   }
   // Default to English for all other languages
   return 'English';
@@ -259,7 +263,7 @@ async function loadPapersByDateRange(startDate, endDate) {
   });
   
   if (validDatesInRange.length === 0) {
-    alert('No available papers in the selected date range.');
+    alert('選択した期間に利用可能な論文がありません。');
     return;
   }
   
@@ -275,7 +279,7 @@ async function loadPapersByDateRange(startDate, endDate) {
   container.innerHTML = `
     <div class="loading-container">
       <div class="loading-spinner"></div>
-      <p>Loading papers from ${formatDate(startDate)} to ${formatDate(endDate)}...</p>
+      <p>${formatDate(startDate)} 〜 ${formatDate(endDate)} の論文を読み込み中...</p>
     </div>
   `;
   
@@ -437,7 +441,7 @@ async function loadPapersByDateRange(startDate, endDate) {
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M21.41 11.58L12.41 2.58C12.05 2.22 11.55 2 11 2H4C2.9 2 2 2.9 2 4V11C2 11.55 2.22 12.05 2.59 12.42L11.59 21.42C11.95 21.78 12.45 22 13 22C13.55 22 14.05 21.78 14.41 21.41L21.41 14.41C21.78 14.05 22 13.55 22 13C22 12.45 21.77 11.94 21.41 11.58ZM5.5 7C4.67 7 4 6.33 4 5.5C4 4.67 4.67 4 5.5 4C6.33 4 7 4.67 7 5.5C7 6.33 6.33 7 5.5 7Z" fill="currentColor"/>
           </svg>
-          Popular Keywords
+          注目キーワード
         </h2>
         <div class="statistics-card">
           <div class="keyword-list">
@@ -456,7 +460,7 @@ async function loadPapersByDateRange(startDate, endDate) {
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3.5 18.5L9.5 12.5L13.5 16.5L22 6.92L20.59 5.5L13.5 13.5L9.5 9.5L2 17L3.5 18.5Z" fill="currentColor"/>
           </svg>
-          Keywords Trend
+          キーワード推移
         </h2>
         <div class="statistics-card">
           <div id="trendChart" style="width: 100%; height: 400px;"></div>
@@ -568,7 +572,7 @@ async function loadPapersByDateRange(startDate, endDate) {
         .style("text-anchor", "middle")
         .style("fill", "#666")
         .style("font-size", "12px")
-        .text("Frequency");
+        .text("出現頻度");
 
       // 添加X轴标题，显示年份和月份（如果被省略的话）
       const startDate = new Date(validDatesInRange[0]);
@@ -707,8 +711,8 @@ async function loadPapersByDateRange(startDate, endDate) {
     console.error('加载论文数据失败:', error);
     container.innerHTML = `
       <div class="loading-container">
-        <p>Loading data fails. Please retry.</p>
-        <p>Error messages: ${error.message}</p>
+        <p>データの読み込みに失敗しました。再試行してください。</p>
+        <p>エラー内容: ${error.message}</p>
       </div>
     `;
   }
@@ -761,7 +765,7 @@ function parseJsonlData(jsonlText, date) {
 
 function formatDate(dateString) {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('ja-JP', {
     year: 'numeric',
     month: 'numeric',
     day: 'numeric'
@@ -775,7 +779,7 @@ function showRelatedPapers(keyword) {
     const relatedPapersContainer = document.getElementById('relatedPapers');
     
     // 更新关键词显示
-    selectedKeywordElement.textContent = 'Keyword: ' + keyword;
+    selectedKeywordElement.textContent = 'キーワード: ' + keyword;
     
     // 查找包含关键词的论文
     const relatedPapers = allPapersData.filter(paper => {
@@ -799,7 +803,7 @@ function showRelatedPapers(keyword) {
     // 更新侧边栏内容
     relatedPapersContainer.innerHTML = relatedPapers.length > 0 
         ? papersHTML 
-        : '<p>No related papers found.</p>';
+        : '<p>関連する論文が見つかりませんでした。</p>';
     
     // 显示侧边栏
     sidebar.classList.add('active');

@@ -90,7 +90,7 @@ function renderFilterTags() {
       tagElement.className = `category-button author-button ${activeAuthors.includes(author) ? 'active' : ''}`;
       tagElement.textContent = author;
       tagElement.dataset.author = author;
-      tagElement.title = "匹配作者姓名";
+      tagElement.title = "著者名に一致";
       
       tagElement.addEventListener('click', () => {
         toggleAuthorFilter(author);
@@ -115,7 +115,7 @@ function renderFilterTags() {
       tagElement.className = `category-button keyword-button ${activeKeywords.includes(keyword) ? 'active' : ''}`;
       tagElement.textContent = keyword;
       tagElement.dataset.keyword = keyword;
-      tagElement.title = "匹配标题和摘要中的关键词";
+      tagElement.title = "タイトル・要約内のキーワードに一致";
       
       tagElement.addEventListener('click', () => {
         toggleKeywordFilter(keyword);
@@ -305,7 +305,7 @@ function matchPapersByKeywords(papers, keywords) {
       return {
         ...paper,
         isMatched: true,
-        matchReason: matchedKeywords.length > 0 ? `关键词: ${matchedKeywords.join(', ')}` : null
+        matchReason: matchedKeywords.length > 0 ? `キーワード: ${matchedKeywords.join(', ')}` : null
       };
     }
     return { ...paper, isMatched: false, matchReason: null };
@@ -330,7 +330,7 @@ function matchPapersByAuthor(papers, query_authors) {
       return {
         ...paper,
         isMatched: true,
-        matchReason: matchedAuthors.length > 0 ? `作者: ${matchedAuthors.join(', ')}` : null
+        matchReason: matchedAuthors.length > 0 ? `著者: ${matchedAuthors.join(', ')}` : null
       };
     }
     return { ...paper, isMatched: false, matchReason: null };
@@ -368,6 +368,7 @@ function matchPapersByKeywordsOrAuthor(papers, keywords, author) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  setupThemeToggle();
   initEventListeners();
 
   fetchGitHubStats();
@@ -667,12 +668,12 @@ function initEventListeners() {
 // Function to detect preferred language based on browser settings
 function getPreferredLanguage() {
   const browserLang = navigator.language || navigator.userLanguage;
-  // Check if browser is set to Chinese variants
+  // 中国語ブラウザは中国語データを優先
   if (browserLang.startsWith('zh')) {
     return 'Chinese';
   }
-  // Default to Chinese for all other languages
-  return 'Chinese';
+  // それ以外は英語データを優先
+  return 'English';
 }
 
 // Function to select the best available language for a date
@@ -680,7 +681,7 @@ function selectLanguageForDate(date, preferredLanguage = null) {
   const availableLanguages = window.dateLanguageMap?.get(date) || [];
   
   if (availableLanguages.length === 0) {
-    return 'Chinese'; // fallback
+    return 'English'; // fallback
   }
   
   // Use provided preference or detect from browser
@@ -691,8 +692,8 @@ function selectLanguageForDate(date, preferredLanguage = null) {
     return preferred;
   }
   
-  // Fallback: prefer Chinese if available, otherwise use the first available
-  return availableLanguages.includes('Chinese') ? 'Chinese' : availableLanguages[0];
+  // Fallback: prefer English if available, otherwise use the first available
+  return availableLanguages.includes('English') ? 'English' : availableLanguages[0];
 }
 
 async function fetchAvailableDates() {
@@ -821,7 +822,7 @@ async function loadPapersByDate(date) {
   container.innerHTML = `
     <div class="loading-container">
       <div class="loading-spinner"></div>
-      <p>Loading paper...</p>
+      <p>論文を読み込み中...</p>
     </div>
   `;
   
@@ -835,7 +836,7 @@ async function loadPapersByDate(date) {
       if (response.status === 404) {
         container.innerHTML = `
           <div class="loading-container">
-            <p>No papers found for this date.</p>
+            <p>この日付の論文は見つかりませんでした。</p>
           </div>
         `;
         paperData = {};
@@ -849,7 +850,7 @@ async function loadPapersByDate(date) {
     if (!text || text.trim() === '') {
       container.innerHTML = `
         <div class="loading-container">
-          <p>No papers found for this date.</p>
+          <p>この日付の論文は見つかりませんでした。</p>
         </div>
       `;
       paperData = {};
@@ -887,8 +888,8 @@ async function loadPapersByDate(date) {
     console.error('加载论文数据失败:', error);
     container.innerHTML = `
       <div class="loading-container">
-        <p>Loading data fails. Please retry.</p>
-        <p>Error messages: ${error.message}</p>
+        <p>データの読み込みに失敗しました。再試行してください。</p>
+        <p>エラー内容: ${error.message}</p>
       </div>
     `;
   }
@@ -969,7 +970,7 @@ function renderCategoryFilter(categories) {
   });
   
   container.innerHTML = `
-    <button class="category-button ${currentCategory === 'all' ? 'active' : ''}" data-category="all">All<span class="category-count">${totalPapers}</span></button>
+    <button class="category-button ${currentCategory === 'all' ? 'active' : ''}" data-category="all">すべて<span class="category-count">${totalPapers}</span></button>
   `;
   
   sortedCategories.forEach(category => {
@@ -1170,7 +1171,7 @@ function renderPapers() {
       ].join(' ').toLowerCase();
       const matched = hay.includes(q);
       p.isMatched = matched;
-      p.matchReason = matched ? [`文本: ${textSearchQuery}`] : undefined;
+      p.matchReason = matched ? [`テキスト: ${textSearchQuery}`] : undefined;
     });
   } else {
     // 关键词和作者匹配，但不过滤，只排序
@@ -1236,7 +1237,7 @@ function renderPapers() {
               `${paper.title} ${paper.summary}`.toLowerCase().includes(keyword.toLowerCase())
             );
             if (matchedKeywords.length > 0) {
-              paper.matchReason.push(`关键词: ${matchedKeywords.join(', ')}`);
+              paper.matchReason.push(`キーワード: ${matchedKeywords.join(', ')}`);
             }
           }
           if (matchesAuthor) {
@@ -1244,7 +1245,7 @@ function renderPapers() {
               paper.authors.toLowerCase().includes(author.toLowerCase())
             );
             if (matchedAuthors.length > 0) {
-              paper.matchReason.push(`作者: ${matchedAuthors.join(', ')}`);
+              paper.matchReason.push(`著者: ${matchedAuthors.join(', ')}`);
             }
           }
         }
@@ -1315,7 +1316,7 @@ function renderPapers() {
             `${paper.title} ${paper.summary}`.toLowerCase().includes(keyword.toLowerCase())
           );
           if (matchedKeywords.length > 0) {
-            paper.matchReason.push(`关键词: ${matchedKeywords.join(', ')}`);
+            paper.matchReason.push(`キーワード: ${matchedKeywords.join(', ')}`);
           }
         }
         if (matchesAuthor) {
@@ -1323,7 +1324,7 @@ function renderPapers() {
             paper.authors.toLowerCase().includes(author.toLowerCase())
           );
           if (matchedAuthors.length > 0) {
-            paper.matchReason.push(`作者: ${matchedAuthors.join(', ')}`);
+            paper.matchReason.push(`著者: ${matchedAuthors.join(', ')}`);
           }
         }
       }
@@ -1336,7 +1337,7 @@ function renderPapers() {
   if (filteredPapers.length === 0) {
     container.innerHTML = `
       <div class="loading-container">
-        <p>No paper found.</p>
+        <p>論文が見つかりませんでした。</p>
       </div>
     `;
     return;
@@ -1350,7 +1351,7 @@ function renderPapers() {
     
     if (paper.isMatched) {
       // 添加匹配原因提示
-      paperCard.title = `匹配: ${paper.matchReason.join(' | ')}`;
+      paperCard.title = `一致: ${paper.matchReason.join(' | ')}`;
     }
     
     const categoryTags = paper.allCategories ? 
@@ -1401,7 +1402,7 @@ function renderPapers() {
 
     paperCard.innerHTML = `
       <div class="paper-card-index">${index + 1}</div>
-      ${paper.isMatched ? '<div class="match-badge" title="匹配您的搜索条件"></div>' : ''}
+      ${paper.isMatched ? '<div class="match-badge" title="検索条件に一致"></div>' : ''}
       <div class="paper-card-header">
         <h3 class="paper-card-title">${highlightedTitle}</h3>
         <p class="paper-card-authors">${formattedAuthors}</p>
@@ -1415,7 +1416,7 @@ function renderPapers() {
           <div class="footer-left">
             <span class="paper-card-date">${formatDate(paper.date)}</span>
           </div>
-          <span class="paper-card-link">Details</span>
+          <span class="paper-card-link">詳細</span>
         </div>
       </div>
     `;
@@ -1501,26 +1502,26 @@ function showPaperDetails(paper, paperIndex) {
   
   const modalContent = `
     <div class="paper-details ${matchedPaperClass}">
-      <p><strong>Authors: </strong>${highlightedAuthors}</p>
-      <p><strong>Categories: </strong>${categoryDisplay}</p>
-      <p><strong>Date: </strong>${formatDate(paper.date)}</p>
+      <p><strong>著者: </strong>${highlightedAuthors}</p>
+      <p><strong>カテゴリ: </strong>${categoryDisplay}</p>
+      <p><strong>日付: </strong>${formatDate(paper.date)}</p>
       
       
       <h3>TL;DR</h3>
       <p>${highlightedSummary}</p>
       
       <div class="paper-sections">
-        ${paper.motivation ? `<div class="paper-section"><h4>Motivation</h4><p>${highlightedMotivation}</p></div>` : ''}
-        ${paper.method ? `<div class="paper-section"><h4>Method</h4><p>${highlightedMethod}</p></div>` : ''}
-        ${paper.result ? `<div class="paper-section"><h4>Result</h4><p>${highlightedResult}</p></div>` : ''}
-        ${paper.conclusion ? `<div class="paper-section"><h4>Conclusion</h4><p>${highlightedConclusion}</p></div>` : ''}
+        ${paper.motivation ? `<div class="paper-section"><h4>背景・目的</h4><p>${highlightedMotivation}</p></div>` : ''}
+        ${paper.method ? `<div class="paper-section"><h4>手法</h4><p>${highlightedMethod}</p></div>` : ''}
+        ${paper.result ? `<div class="paper-section"><h4>結果</h4><p>${highlightedResult}</p></div>` : ''}
+        ${paper.conclusion ? `<div class="paper-section"><h4>結論</h4><p>${highlightedConclusion}</p></div>` : ''}
       </div>
       
-      ${highlightedAbstract ? `<h3>Abstract</h3><p class="original-abstract">${highlightedAbstract}</p>` : ''}
+      ${highlightedAbstract ? `<h3>要旨</h3><p class="original-abstract">${highlightedAbstract}</p>` : ''}
       
       <div class="pdf-preview-section">
         <div class="pdf-header">
-          <h3>PDF Preview</h3>
+          <h3>PDFプレビュー</h3>
           <button class="pdf-expand-btn" onclick="togglePdfSize(this)">
             <svg class="expand-icon" viewBox="0 0 24 24" width="24" height="24">
               <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
@@ -1549,15 +1550,15 @@ function showPaperDetails(paper, paperIndex) {
   if (paper.code_url) {
     githubLink.href = paper.code_url;
     githubLink.style.display = 'flex'; 
-    githubLink.title = "View Code on GitHub";
+    githubLink.title = "GitHubでコードを見る";
   } else {
     githubLink.style.display = 'none';
   }
   // ---------------------------
 
-  // 提示词来自：https://papers.cool/
-  prompt = `请你阅读这篇文章${paper.url.replace('abs', 'pdf')},总结一下这篇文章解决的问题、相关工作、研究方法、做了什么实验及其结果、结论，最后整体总结一下这篇文章的内容`
-  document.getElementById('kimiChatLink').href = `https://www.kimi.com/_prefill_chat?prefill_prompt=${prompt}&system_prompt=你是一个学术助手，后面的对话将围绕着以下论文内容进行，已经通过链接给出了论文的PDF和论文已有的FAQ。用户将继续向你咨询论文的相关问题，请你作出专业的回答，不要出现第一人称，当涉及到分点回答时，鼓励你以markdown格式输出。&send_immediately=true&force_search=true`;
+  // プロンプト参考: https://papers.cool/
+  prompt = `この論文 ${paper.url.replace('abs', 'pdf')} を読み、解決課題、関連研究、手法、実験内容と結果、結論を日本語で要約してください。最後に全体の要点を簡潔にまとめてください。`;
+  document.getElementById('kimiChatLink').href = `https://www.kimi.com/_prefill_chat?prefill_prompt=${prompt}&system_prompt=あなたは学術アシスタントです。以降の対話は指定された論文を中心に進みます。論文PDFとFAQへのリンクが与えられています。ユーザーの質問に専門的かつ簡潔に日本語で回答し、一人称表現は避けてください。箇条書きが適切な場合はMarkdown形式を優先してください。&send_immediately=true&force_search=true`;
   
   // 更新论文位置信息
   const paperPosition = document.getElementById('paperPosition');
@@ -1633,7 +1634,7 @@ function showRandomPaperIndicator() {
   // 创建新的指示器
   const indicator = document.createElement('div');
   indicator.className = 'random-paper-indicator';
-  indicator.textContent = 'Random Paper';
+  indicator.textContent = 'ランダム論文';
   
   // 添加到页面
   document.body.appendChild(indicator);
@@ -1669,7 +1670,7 @@ function toggleView() {
 
 function formatDate(dateString) {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('ja-JP', {
     year: 'numeric',
     month: 'numeric',
     day: 'numeric'
@@ -1683,11 +1684,11 @@ async function loadPapersByDateRange(startDate, endDate) {
   });
   
   if (validDatesInRange.length === 0) {
-    alert('No available papers in the selected date range.');
+    alert('選択した期間に利用可能な論文がありません。');
     return;
   }
   
-  currentDate = `${startDate} to ${endDate}`;
+  currentDate = `${startDate} 〜 ${endDate}`;
   document.getElementById('currentDate').textContent = `${formatDate(startDate)} - ${formatDate(endDate)}`;
   
   // 不再重置激活的关键词和作者
@@ -1697,7 +1698,7 @@ async function loadPapersByDateRange(startDate, endDate) {
   container.innerHTML = `
     <div class="loading-container">
       <div class="loading-spinner"></div>
-      <p>Loading papers from ${formatDate(startDate)} to ${formatDate(endDate)}...</p>
+      <p>${formatDate(startDate)} 〜 ${formatDate(endDate)} の論文を読み込み中...</p>
     </div>
   `;
   
@@ -1752,8 +1753,8 @@ async function loadPapersByDateRange(startDate, endDate) {
     console.error('加载论文数据失败:', error);
     container.innerHTML = `
       <div class="loading-container">
-        <p>Loading data fails. Please retry.</p>
-        <p>Error messages: ${error.message}</p>
+        <p>データの読み込みに失敗しました。再試行してください。</p>
+        <p>エラー内容: ${error.message}</p>
       </div>
     `;
   }

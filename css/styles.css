@@ -27,6 +27,28 @@
   --author-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
   --keyword-color: #8b5cf6;
   --keyword-gradient: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  --header-bg: rgba(255, 255, 255, 0.8);
+  --surface-muted: #f8fafc;
+  --surface-strong: #ffffff;
+  --overlay-text: #ffffff;
+}
+
+[data-theme='dark'] {
+  --background-color: #0b1220;
+  --card-bg-color: #111827;
+  --background-hover: #1f2937;
+  --text-color: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --text-tertiary: #6b7280;
+  --border-color: #374151;
+  --border-accent: rgba(129, 140, 248, 0.35);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.55);
+  --header-bg: rgba(11, 18, 32, 0.8);
+  --surface-muted: #1f2937;
+  --surface-strong: #111827;
+  --overlay-text: #e5e7eb;
 }
 
 * {
@@ -149,7 +171,7 @@ header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: var(--header-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border-color);
@@ -301,7 +323,7 @@ header {
 
 /* 类别导航栏 */
 .category-nav {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: var(--header-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   position: sticky;
@@ -2301,6 +2323,44 @@ footer {
 
 .github-link.outdated-repo {
   /* opacity: 0.7; Removed opacity */
+}
+
+[data-theme='dark'] .pdf-preview-section {
+  border-top-color: var(--border-color);
+}
+
+[data-theme='dark'] .pdf-expand-btn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme='dark'] .pdf-expand-btn svg {
+  fill: var(--text-secondary);
+}
+
+[data-theme='dark'] .pdf-expand-btn:hover svg {
+  fill: var(--text-color);
+}
+
+[data-theme='dark'] .pdf-container.expanded,
+[data-theme='dark'] .pdf-container,
+[data-theme='dark'] .pdf-container iframe,
+[data-theme='dark'] .back-to-top {
+  background: var(--surface-strong);
+}
+
+[data-theme='dark'] .back-to-top:hover {
+  background: #1f2937;
+}
+
+[data-theme='dark'] .github-link {
+  background-color: #111827;
+  color: #e5e7eb;
+  border-color: #374151;
+}
+
+[data-theme='dark'] .github-link:hover {
+  background-color: #1f2937;
+  border-color: #4b5563;
 }
 
 .github-stars {

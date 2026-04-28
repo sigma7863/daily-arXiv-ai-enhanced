@@ -1,11 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Access Verification - daily-arXiv-ai-enhanced</title>
+    <title>アクセス認証 - daily-arXiv-ai-enhanced</title>
     <style>
         /* Clean login page styling */
+        :root {
+            --login-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --panel-bg: #ffffff;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --input-border: #ddd;
+        }
+        [data-theme="dark"] {
+            --login-bg: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+            --panel-bg: #111827;
+            --text-primary: #e5e7eb;
+            --text-secondary: #9ca3af;
+            --input-border: #374151;
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             display: flex;
@@ -13,24 +27,25 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--login-bg);
         }
         .login-container {
-            background: white;
+            background: var(--panel-bg);
             padding: 40px;
             border-radius: 12px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             width: 90%;
             max-width: 400px;
+            position: relative;
         }
         h1 {
             margin: 0 0 30px;
-            color: #333;
+            color: var(--text-primary);
             text-align: center;
         }
         .subtitle {
             text-align: center;
-            color: #666;
+            color: var(--text-secondary);
             margin-bottom: 30px;
             font-size: 14px;
         }
@@ -40,17 +55,19 @@
         label {
             display: block;
             margin-bottom: 8px;
-            color: #555;
+            color: var(--text-secondary);
             font-weight: 500;
         }
         input[type="password"] {
             width: 100%;
             padding: 12px;
-            border: 2px solid #ddd;
+            border: 2px solid var(--input-border);
             border-radius: 6px;
             font-size: 16px;
             box-sizing: border-box;
             transition: border-color 0.3s;
+            background: transparent;
+            color: var(--text-primary);
         }
         input[type="password"]:focus {
             outline: none;
@@ -112,6 +129,20 @@
             font-size: 12px;
             color: #999;
         }
+        .theme-toggle-login {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            cursor: pointer;
+        }
         /* Site logo styles */
         .site-logo {
             display: flex;
@@ -142,20 +173,21 @@
 </head>
 <body>
     <div class="login-container">
+        <button id="themeToggle" class="theme-toggle-login" title="ダークモードに切り替え" aria-label="ダークモードに切り替え"></button>
         <a href="index.html" class="site-logo">
             <img src="assets/logo2-removebg-preview.png" alt="Daily arXiv AI Enhanced Logo" class="logo-image">
             <span class="site-title">Daily arXiv AI Enhanced</span>
         </a>
-        <h1>Access Verification</h1>
-        <div class="subtitle">Please enter password to continue</div>
+        <h1>アクセス認証</h1>
+        <div class="subtitle">続行するにはパスワードを入力してください</div>
         <form id="loginForm">
             <div class="input-group">
-                <label for="password">Password</label>
+                <label for="password">パスワード</label>
                 <input
                     type="password"
                     id="password"
                     name="password"
-                    placeholder="Enter your password"
+                    placeholder="パスワードを入力"
                     required
                     autofocus
                     autocomplete="current-password"
@@ -163,11 +195,11 @@
             </div>
             <div class="remember-me">
                 <input type="checkbox" id="rememberMe" checked>
-                <label for="rememberMe">Remember me for 7 days</label>
+                <label for="rememberMe">7日間ログイン状態を保持</label>
             </div>
-            <button type="submit">Verify Access</button>
+            <button type="submit">認証する</button>
             <div class="error-message" id="errorMessage">
-                ❌ Invalid password. Please try again.
+                ❌ パスワードが正しくありません。再度お試しください。
             </div>
         </form>
         <div class="footer">
@@ -175,9 +207,11 @@
         </div>
     </div>
 
+    <script src="js/theme.js"></script>
     <script src="js/auth-config.js"></script>
     <script src="js/auth.js"></script>
     <script>
+        setupThemeToggle();
         const form = document.getElementById('loginForm');
         const passwordInput = document.getElementById('password');
         const rememberMe = document.getElementById('rememberMe');
