@@ -1603,7 +1603,7 @@ function navigateToNextPaper() {
 function showRandomPaper() {
   // 检查是否有可用的论文
   if (currentFilteredPapers.length === 0) {
-    console.log('No papers available to show random paper');
+    console.log('ランダム表示できる論文がありません');
     return;
   }
   
@@ -1620,7 +1620,7 @@ function showRandomPaper() {
   // 显示随机论文指示器
   showRandomPaperIndicator();
   
-  console.log(`Showing random paper: ${randomIndex + 1}/${currentFilteredPapers.length}`);
+  console.log(`ランダム論文を表示: ${randomIndex + 1}/${currentFilteredPapers.length}`);
 }
 
 // 显示随机论文指示器

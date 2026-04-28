@@ -1,74 +1,61 @@
 # 🚀 daily-arXiv-ai-enhanced
 
 > [!CAUTION]
-> 若您所在法域对学术数据有审查要求，谨慎运行本代码；任何二次分发版本必须履行合规审查（包括但不限于原始论文合规性、AI合规性）义务，否则一切法律后果由下游自行承担。
+> 学術データの取り扱いに法的・規制上の要件がある法域では、必ず要件を確認した上で利用してください。二次配布を行う場合も、配布者自身の責任で法令順守・内容審査を行ってください。
 
-> [!CAUTION]
-> If your jurisdiction has censorship requirements for academic data, run this code with caution; any secondary distribution version must remove the entrance accessible to China and fulfill the content review obligations, otherwise all legal consequences will be borne by the downstream.
+`daily-arXiv-ai-enhanced` は、arXiv 論文の自動収集と AI 要約を組み合わせ、毎日の論文チェックを効率化するためのプロジェクトです。
 
+## ✨ 主な機能
 
-This innovative tool transforms how you stay updated with arXiv papers by combining automated crawling with AI-powered summarization.
+1. **サーバー不要で運用可能**
+   GitHub Actions + GitHub Pages で動作し、専用サーバーは不要です。
+2. **AI による要約生成**
+   毎日クロールした論文を LLM で要約し、短時間で概要を把握できます。
+3. **読みやすい閲覧 UI**
+   キーワード・著者の関心設定、日付/期間での絞り込み、強調表示に対応しています。
+4. **SKILL 拡張**
+   フィルタリング処理をモジュール化して拡張できます。
+5. **設定の再利用**
+   Settings 画面からキーワード/著者設定をコピーし、他環境へ流用できます。
 
-
-## ✨ Key Features
-
-🎯 **Zero Infrastructure Required**
-- Leverages GitHub Actions and Pages - no server needed
-- Completely free to deploy and use
-
-🤖 **Smart AI Summarization**
-- Daily paper crawling with DeepSeek-powered summaries
-- Cost-effective: Only ~0.2 CNY per day
-
-💫 **Smart Reading Experience**
-- Personalized paper highlighting based on your interests
-- Cross-device compatibility (desktop & mobile)
-- Local preference storage for privacy
-- Flexible date range filtering
-
-🧩 **SKILL System**
-- Plug-and-play skill modules for customizing paper filtering
-
-⚙️ **Easy Preference Export & Integration**
-- One-click copy in Settings to export your keywords and authors configuration
-- Seamlessly combine exported preferences with SKILL for reproducible and shareable setups
-
-👉 **[Try it now!](https://dw-dengwei.github.io/daily-arXiv-ai-enhanced/)** - No installation required
-
-
+👉 **デモ**: https://dw-dengwei.github.io/daily-arXiv-ai-enhanced/
 
 https://github.com/user-attachments/assets/b25712a4-fb8d-484f-863d-e8da6922f9d7
 
+## 使い方
 
+このリポジトリは既定で **cs.CV / cs.GR / cs.CL / cs.AI** を対象に日次実行し、要約データを生成します。  
+カテゴリ・言語・モデルは GitHub の Variables/Secrets で変更できます。
 
+### セットアップ手順
 
-# How to use
-This repo will daily crawl arXiv papers about **cs.CV, cs.GR, cs.CL and cs.AI**, and use **DeepSeek** to summarize the papers in **Chinese**.
-If you wish to crawl other arXiv categories, use other LLMs, or other languages, please follow the instructions.
-Otherwise, you can directly use this repo in https://dw-dengwei.github.io/daily-arXiv-ai-enhanced/. Please star it if you like :)
+1. このリポジトリを自分の GitHub アカウントに Fork します。  
+   必要に応じて [buy-me-a-coffee](./buy-me-a-coffee/README.md) の内容を自分用に変更してください。
+2. `Settings` → `Secrets and variables` → `Actions` を開きます。
+3. `Secrets` に以下を作成します。
+   - `OPENAI_API_KEY`
+   - `OPENAI_BASE_URL`
+4. （任意）公開ページを保護したい場合は `ACCESS_PASSWORD` を設定します。
+5. `Variables` に以下を作成します。
+   - `CATEGORIES`（例: `cs.CL, cs.CV`）
+   - `LANGUAGE`（例: `Chinese` / `English`）
+   - `MODEL_NAME`（例: `deepseek-chat`）
+   - `EMAIL`（コミット用メール）
+   - `NAME`（コミット用名前）
+6. `Actions` → `arXiv-daily-ai-enhanced` を開き、`Run workflow` で手動実行して動作確認します。  
+   （初回は時間がかかる場合があります）
+7. GitHub Pages を有効化します。  
+   `Settings` → `Pages` → `Build and deployment` で `Deploy from a branch`、`main`、`/(root)` を選択します。
+8. 数分待ってから `https://<username>.github.io/daily-arXiv-ai-enhanced/` を開きます。
 
-**Instructions:**
-1. Fork this repo to your own account and delete my own information in [by-me-a-coffee](./buy-me-a-coffee/README.md).
-2. Go to: your-own-repo -> Settings -> Secrets and variables -> Actions
-3. Go to Secrets. Secrets are encrypted and used for sensitive data
-4. Create two repository secrets named `OPENAI_API_KEY` and `OPENAI_BASE_URL`, and input corresponding values.
-5. [Optional] Set a password in `secrets.ACCESS_PASSWORD` if you do not wish others to access your page. (see https://github.com/dw-dengwei/daily-arXiv-ai-enhanced/pull/64)
-6. Go to Variables. Variables are shown as plain text and are used for non-sensitive data
-7. Create the following repository variables:
-   1. `CATEGORIES`: separate the categories with ",", such as "cs.CL, cs.CV"
-   2. `LANGUAGE`: such as "Chinese" or "English"
-   3. `MODEL_NAME`: such as "deepseek-chat"
-   4. `EMAIL`: your email for push to GitHub
-   5. `NAME`: your name for push to GitHub
-8. Go to your-own-repo -> Actions -> arXiv-daily-ai-enhanced
-9. You can manually click **Run workflow** to test if it works well (it may take about one hour). By default, this action will automatically run every day. You can modify it in `.github/workflows/run.yml`
-10. Set up GitHub pages: Go to your own repo -> Settings -> Pages. In `Build and deployment`, set `Source="Deploy from a branch"`, `Branch="main", "/(root)"`. Wait for a few minutes, go to https://\<username\>.github.io/daily-arXiv-ai-enhanced/. Please see this [issue](https://github.com/dw-dengwei/daily-arXiv-ai-enhanced/issues/14) for more precise instructions.
+## 計画（Plans）
 
-# Plans
-See https://github.com/users/dw-dengwei/projects/3
+https://github.com/users/dw-dengwei/projects/3
 
-# Contributors
-Thanks to the following special contributors for contributing code, discovering bugs, and sharing useful ideas for this project!!!
+## コントリビューター（Contributors）
+
+本プロジェクトにコード提供・バグ報告・改善提案をしてくださった皆さまに感謝します。
+
 <table>
   <tbody>
     <tr>
@@ -91,8 +78,6 @@ Thanks to the following special contributors for contributing code, discovering 
         <a href="https://github.com/eclipse0922"><img src="https://avatars.githubusercontent.com/u/6214316?v=4" width="100px;" alt="eclipse0922"/><br /><sub><b>eclipse0922</b></sub></a><br />
       </td>
     </tr>
-
-
   </tbody>
   <tbody>
    <tr>
@@ -109,14 +94,16 @@ Thanks to the following special contributors for contributing code, discovering 
         <a href="https://github.com/fengxueguiren"><img src="https://avatars.githubusercontent.com/u/153522370?v=4" width="100px;" alt="fengxueguiren"/><br /><sub><b>fengxueguiren</b></sub></a><br />
       </td>
       <td align="center" valign="top">
-        <a href="https://github.com/zerocpp"><img src="https://avatars.githubusercontent.com/u/2630297?v=4" width="100px;" alt="fengxueguiren"/><br /><sub><b>zerocpp</b></sub></a><br />
+        <a href="https://github.com/zerocpp"><img src="https://avatars.githubusercontent.com/u/2630297?v=4" width="100px;" alt="zerocpp"/><br /><sub><b>zerocpp</b></sub></a><br />
       </td>
    </tr>
   </tbody>
 </table>
 
-# Acknowledgement
-We sincerely thank the following individuals and organizations for their promotion and support!!!
+## 謝辞（Acknowledgement）
+
+本プロジェクトの紹介・拡散・支援に感謝します。
+
 <table>
   <tbody>
     <tr>
@@ -127,19 +114,19 @@ We sincerely thank the following individuals and organizations for their promoti
         <a href="https://x.com/aigclink/status/1930897858963853746"><img src="https://pbs.twimg.com/profile_images/1729450995850027008/gllXr6bh_400x400.jpg" width="100px;" alt="AIGCLINK"/><br /><sub><b>AIGCLINK</b></sub></a><br />
       </td>
       <td align="center" valign="top">
-        <a href="https://www.ruanyifeng.com/blog/2025/06/weekly-issue-353.html"><img src="https://avatars.githubusercontent.com/u/905434" width="100px;" alt="阮一峰的网络日志"/><br /><sub><b>阮一峰的网络日志 <br> 科技爱好者周刊 <br> （第 353 期）</b></sub></a><br />
+        <a href="https://www.ruanyifeng.com/blog/2025/06/weekly-issue-353.html"><img src="https://avatars.githubusercontent.com/u/905434" width="100px;" alt="阮一峰的网络日志"/><br /><sub><b>阮一峰のネットログ <br> 科技愛好者週刊 <br> （第 353 期）</b></sub></a><br />
       </td>
       <td align="center" valign="top">
-        <a href="https://hellogithub.com/periodical/volume/111"><img src="https://github.com/user-attachments/assets/eff6b6dd-0323-40c4-9db6-444a51bbc80a" width="100px;" alt="《HelloGitHub》第 111 期"/><br /><sub><b>《HelloGitHub》<br> 月刊第 111 期</b></sub></a><br />
+        <a href="https://hellogithub.com/periodical/volume/111"><img src="https://github.com/user-attachments/assets/eff6b6dd-0323-40c4-9db6-444a51bbc80a" width="100px;" alt="《HelloGitHub》第 111 期"/><br /><sub><b>HelloGitHub <br> 月刊第 111 期</b></sub></a><br />
       </td>
     </tr>
   </tbody>
 </table>
 
-
-# Star history
+## Star 履歴
 
 [![Stargazers over time](https://starchart.cc/dw-dengwei/daily-arXiv-ai-enhanced.svg?variant=adaptive)](https://starchart.cc/dw-dengwei/daily-arXiv-ai-enhanced)
 
-# Buy me a coffee
-[here](./buy-me-a-coffee/README.md)
+## サポート
+
+[こちら](./buy-me-a-coffee/README.md)
